@@ -12,6 +12,10 @@
 
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
+  
+  This file is derived from the Adafruit serialthermocouple.ino example.
+  
+ It has been modified by R. Berliner to output the temperature in SignalK JSON form.
  ****************************************************/
 
 #include <SPI.h>
@@ -37,24 +41,28 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 void setup() {
   while (!Serial); // wait for Serial on Leonardo/Zero, etc
   
-  Serial.begin(9600);
+  Serial.begin(38400);
   
-  Serial.println("MAX31855 test");
+  Serial.println("ArduinoTC");
   // wait for MAX chip to stabilize
   delay(500);
 }
 
 void loop() {
   // basic readout test, just print the current temp
-   Serial.print("Internal Temp = ");
-   Serial.println(thermocouple.readInternal());
+   //Serial.print("Internal Temp = ");
+   //Serial.println(thermocouple.readInternal());
 
    double c = thermocouple.readCelsius();
    if (isnan(c)) {
      Serial.println("Something wrong with thermocouple!");
    } else {
-     Serial.print("C = "); 
-     Serial.println(c);
+//     Serial.print("C = "); 
+//    Serial.println(c);
+     Serial.print("{\"context\": \"vessels.self\",\"updates\": [ { \"values\" : [{\"path\": \"propulsion.engine.coolantTemperature\",\"value\" : ");
+     Serial.print(c);
+     Serial.print("}],\"source\": { \"label\": \"ArduinoTC\"}}]}");
+     Serial.print("\n");
    }
    //Serial.print("F = ");
    //Serial.println(thermocouple.readFarenheit());
